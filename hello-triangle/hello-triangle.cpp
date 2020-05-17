@@ -75,6 +75,7 @@ private:
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
   VkDevice device;
   VkQueue graphicsQueue;
+  VkSurfaceKHR surface;
 
   void initWindow() {
     glfwInit();
@@ -88,8 +89,15 @@ private:
   void initVulkan() {
     createInstance();
     setupDebugMessenger();
+    createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
+  }
+
+  void createSurface() {
+    if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+      throw std::runtime_error("failed to create window surface!");
+    }
   }
 
   void createInstance() {
@@ -317,6 +325,7 @@ private:
       DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
 
+    vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);
 
     glfwDestroyWindow(window);
